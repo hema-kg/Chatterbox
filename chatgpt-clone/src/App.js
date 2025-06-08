@@ -80,10 +80,6 @@ function App() {
 
   return (
     <div className="App">
-<<<<<<< HEAD
-      <h1>Chatterbox</h1>
-      <MessageList messages={messages} /> {/* Pass the state to MessageList */}
-=======
       <h1>ChatGPT Clone (with Real AI)</h1>
       <MessageList messages={messages} />
       {/* Display loading indicator */}
@@ -93,7 +89,6 @@ function App() {
         </div>
       )}
       <div ref={messagesEndRef} />
->>>>>>> efa16b9eda85d6297b3b332945694f82da273597
       <MessageInput onSendMessage={handleSendMessage} />
     </div>
   );
