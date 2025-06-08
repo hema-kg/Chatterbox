@@ -36,7 +36,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>ChatGPT Clone</h1>
+      <h1>Chatterbox</h1>
       <MessageList messages={messages} /> {/* Pass the state to MessageList */}
       <MessageInput onSendMessage={handleSendMessage} />
     </div>
