@@ -103,3 +103,20 @@ body {
   margin-top: 20px;
   font-style: italic;
 }
+
+/* ... other styles in src/App.css ... */
+
+.loading-indicator {
+  padding: 10px 20px;
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  background-color: #f8f9fa; /* Same as message input background for consistency */
+}
+
+/* Optional: Style error messages differently if you added an isError flag */
+.message.error { /* Assuming you might add an 'error' class to the message div if msg.isError is true */
+  background-color: #f8d7da; /* Light red for errors */
+  color: #721c24; /* Dark red text */
+  border: 1px solid #f5c6cb;
+}
