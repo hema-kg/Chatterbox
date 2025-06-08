@@ -1,75 +1,66 @@
 // server/index.js
-require('dotenv').config();
+require('dotenv').config(); // Keep for now, though OPENAI_API_KEY won't be used directly for responses
 const express = require('express');
 const cors = require('cors');
-const OpenAI = require('openai'); // Import OpenAI
+// const OpenAI = require('openai'); // Comment out or remove OpenAI import
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Initialize OpenAI client
-// Ensure your OPENAI_API_KEY is set in your .env file
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Comment out or remove OpenAI client initialization
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('AI Backend Server is running!');
+  res.send('AI Backend Server is running (Mock AI Mode)!');
 });
+
+const genericReplies = [
+  "That's interesting!",
+  "Tell me more.",
+  "I see.",
+  "Fascinating!",
+  "Hmm, I'll have to think about that.",
+  "Okay, what else?",
+  "Interesting perspective."
+];
+let genericReplyIndex = 0;
 
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
-  console.log('Received message on backend for OpenAI:', message);
+  const lowerCaseMessage = message ? message.toLowerCase() : "";
+  console.log('Received message for Mock AI:', message);
 
   if (!message) {
     return res.status(400).json({ error: 'Message is required' });
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    console.error('OpenAI API key is missing. Make sure it is set in .env');
-    return res.status(500).json({ error: 'Server configuration error: Missing API key.' });
+  let aiReply = "";
+
+  if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi")) {
+    aiReply = "Hi there! I'm a friendly mock AI. How can I pretend to help you today?";
+  } else if (lowerCaseMessage.includes("how are you")) {
+    aiReply = "I'm just a bunch of mock code, but I'm feeling great! Thanks for asking!";
+  } else if (lowerCaseMessage.includes("help")) {
+    aiReply = "I can offer some pre-programmed responses. Try asking 'how are you', say 'hello', or tell me something interesting!";
+  } else if (lowerCaseMessage.includes("what can you do")) {
+    aiReply = "I can chat with you using a set of predefined responses. I'm here to help test this cool chat interface!";
+  } else {
+    aiReply = genericReplies[genericReplyIndex];
+    genericReplyIndex = (genericReplyIndex + 1) % genericReplies.length; // Cycle through generic replies
   }
 
-  try {
-    // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' }, // Optional: System message to set AI behavior
-        { role: 'user', content: message },
-      ],
-      model: 'gpt-3.5-turbo', // Or your preferred model, e.g., 'gpt-4'
-      // max_tokens: 150, // Optional: limit response length
-    });
-
-    const aiReply = completion.choices[0]?.message?.content?.trim();
-
-    if (aiReply) {
-      res.json({ reply: aiReply });
-    } else {
-      console.error('OpenAI response was empty or in unexpected format:', completion);
-      res.status(500).json({ error: 'Failed to get a valid response from AI' });
-    }
-  } catch (error) {
-    console.error('Error calling OpenAI API:', error.response ? error.response.data : error.message);
-    if (error.response && error.response.status === 401) {
-        res.status(401).json({ error: 'OpenAI API authentication error. Check your API key.' });
-    } else if (error.response && error.response.status === 429) {
-        res.status(429).json({ error: 'OpenAI API rate limit exceeded. Please try again later.' });
-    }
-    else {
-        res.status(500).json({ error: 'An error occurred while communicating with the AI.' });
-    }
-  }
+  // Simulate network delay
+  setTimeout(() => {
+    res.json({ reply: aiReply });
+  }, 700 + Math.random() * 500); // Simulate 0.7 to 1.2 seconds delay
 });
 
 app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn('WARNING: OPENAI_API_KEY is not set in .env file. The /api/chat endpoint will not work.');
-  } else {
-    console.log('OpenAI API key loaded successfully.');
-  }
+  console.log(`Mock AI Server listening at http://localhost:${port}`);
+  // console.log('OpenAI API key checks are disabled in Mock AI mode.'); // Optional: indicate mock mode
 });
